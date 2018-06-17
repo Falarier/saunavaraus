@@ -1,3 +1,5 @@
+var moment = Moment.moment;
+moment.locale('fi-FI');
 
 // ctrl+space intellisense
 function doGet(e) {
@@ -21,7 +23,6 @@ function doGet(e) {
 
 function getVuorotFromSheet(){
   //return {"trackingid: " : 6, "status: " : true };
-  var moment = Moment.moment;
   var ss = SpreadsheetApp.openById("1FMbKMaKfiwFc8Jk4bDBd96VCaqPS1yMbHwhySR4sBVU");
   var sheet = ss.getSheetByName('Vuorot');
   
@@ -56,6 +57,23 @@ function getVuorotFromSheet(){
   //return sheet.getS// {"trackingid: " : newId, "status: " : true };
 }
 
+function addReservationFail(data) {
+  var p = addReservationDeep();
+  //Promise.all([p(data)
+  /*
+    return new cPromisePolyfill.Promise (function ( resolve, reject ) {
+      try {
+        resolve (addReservationDeep(data));
+      }
+      
+      catch (err) {
+        Logger.log(err);
+        reject (err);
+      }
+      
+    });*/
+}
+
 function addReservation(data) {
   Logger.log(data);
   
@@ -83,6 +101,14 @@ function addReservation(data) {
           sheetVaraajat.appendRow(holder);
           
           SpreadsheetApp.flush();
+          
+          data.begin = moment(vuoroRow[1]).format("MMMM Do YYYY, h:mm");
+          
+          
+          MailApp.sendEmail(data.email, "Saunavaraus Lapinlahden juhannukseen 2018", "Olet varannut vuoron nimellä " + data.name + " Sähköposti: " + data.email + " Vuoro nro: " + data.vuoro + " Vuoro alkaa " + data.begin);
+          
+          
+          return data;
         }
       }
   }
@@ -95,8 +121,6 @@ function addReservation(data) {
   var holder = [data.name, data.email, createdDate, newId, data.agree, user];
   */
 
-  
-  return "success";
 }
 
 
@@ -105,7 +129,6 @@ function getRandom(){
 }
 
 function fillVuorot(){
-  var moment = Moment.moment;
   
   var ss = SpreadsheetApp.openById("1FMbKMaKfiwFc8Jk4bDBd96VCaqPS1yMbHwhySR4sBVU");
   var sheet = ss.getSheetByName('Vuorot');
